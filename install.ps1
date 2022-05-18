@@ -13,7 +13,7 @@ else {
 	Write-Host -ForegroundColor Green "Code is running as administrator go on executing the script..." ;
 	$WazuhMgr = Read-Host -Prompt "Please Input Your Wazuh Manager Address";
 	$WazuhGroup = Read-Host -Prompt "Please Input Your Wazuh Agent Group (Case Sensitive)";
-	echo "Using $WazuhMgr as Wazuh Server";
+	echo "Using $WazuhMgr as Wazuh Server and $WazuhGroup as Agent's group";
 	echo "";
 
 	echo "Detecting OS Version...";
@@ -26,8 +26,18 @@ else {
 	echo "";
 
 	if($isWindows10){
-		Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.3.0-1.msi -OutFile ${env:tmp}\wazuh-agent-4.3.0.msi; 
+		write-host -foreground green "Downloading wazuh installer";
+		
+		Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.3.0-1.msi -OutFile ${env:tmp}\wazuh-agent-4.3.0.msi;
+
+		write-host -foreground green "Installing wazuh";
 		msiexec.exe /i ${env:tmp}\wazuh-agent-4.3.0.msi /q WAZUH_MANAGER=$WazuhMgr WAZUH_REGISTRATION_SERVER=$WazuhMgr  WAZUH_AGENT_GROUP=$WazuhGroup;
+
+		write-host - foreground green "Wazuh Agent installation successful, starting wazuh-agent";
+
+		Net Start WazuhSvc
+
+		write-host - foreground green "Wazuh Agent successfully started";
 	}
 
 	elseif($isWindows7){
