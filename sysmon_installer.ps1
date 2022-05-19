@@ -1,3 +1,6 @@
+#TODOS : add checking for windows architecture (64 bit or 32bit)
+
+
 echo "Wazuh Manager and Sysmon Installation Service";
 echo "";
 
@@ -39,7 +42,30 @@ else {
 	echo "";
 
 	if($isWindows10){
-		
+		echo "Downloading sysmon assets for windows..."
+
+		$InstallerPath = "${env:tmp}\Sysmon.zip"
+		echo "Downloading Installer"
+		[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 #This line is to deal with SSL/TLS conection can't be made
+		$WebClient = New-Object System.Net.WebClient
+		$WebClient.DownloadFile("https://download.sysinternals.com/files/Sysmon.zip","$InstallerPath")
+		write-host -foreground green "Installer downloaded and saved at $InstallerPath"
+
+		$ConfigPath = "${env:tmp}\SysmonConfig.xml"
+		echo "Downloading Our recommended config"
+		[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 #This line is to deal with SSL/TLS conection can't be made
+		$WebClient = New-Object System.Net.WebClient
+		$WebClient.DownloadFile("https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml","$ConfigPath")
+		write-host -foreground green "Config downloaded and saved at $ConfigPath"
+
+		$DecompressPath = "${env:tmp}\Sysmon\"
+		$shell = New-Object -ComObject shell.application
+		$zip = $shell.NameSpace("$InstallerPath")
+		MkDir("$DecompressPath")
+		foreach ($item in $zip.items()) {
+			$shell.Namespace("$DecompressPath").CopyHere($item)
+		}
+
 	}
 
 	elseif($isWindows7){
