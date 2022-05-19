@@ -24,23 +24,22 @@ else {
 			sysmon -u
 		}
 		else{
+			Write-Warning "Cancelling installation..."
 			Break;
 		}
 	}
 
+	echo "Detecting OS Version...";
+	$OSVersion = (Get-WmiObject -class Win32_OperatingSystem).Caption;
+	echo "OS Version Detected : $OSVersion";
+	echo "";
+
+	$isWindows10 = $OSVersion.Contains("Windows 10");
+	$isWindows7 = $OSVersion.Contains("Windows 7");
+	echo "";
+
 	if($isWindows10){
-		write-host -foreground green "Downloading wazuh installer";
 		
-		Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.3.0-1.msi -OutFile ${env:tmp}\wazuh-agent-4.3.0.msi;
-
-		write-host -foreground green "Installing wazuh";
-		msiexec.exe /i ${env:tmp}\wazuh-agent-4.3.0.msi /q WAZUH_MANAGER=$WazuhMgr WAZUH_REGISTRATION_SERVER=$WazuhMgr  WAZUH_AGENT_GROUP=$WazuhGroup;
-
-		write-host - foreground green "Wazuh Agent installation successful, starting wazuh-agent";
-
-		Net Start WazuhSvc
-
-		write-host - foreground green "Wazuh Agent successfully started";
 	}
 
 	elseif($isWindows7){

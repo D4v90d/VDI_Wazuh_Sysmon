@@ -1,3 +1,5 @@
+##TODO : test the windows 10 installation and start windows 7 installation
+
 echo "Wazuh Manager and Sysmon Installation Service";
 echo "";
 
