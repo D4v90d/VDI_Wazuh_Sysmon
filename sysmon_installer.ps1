@@ -16,7 +16,7 @@ else {
 	Write-Host -ForegroundColor Green "Code is running as administrator go on executing the script..." ;
 	$SysmonChk = Sysmon;
 
-	$isSysmonInstalled = $OSVersion.Contains("System Monitor");
+	$isSysmonInstalled = $SysmonChk.Contains("System Monitor");
 
 	if($isSysmonInstalled){
 		$isUninstall = Read-Host -ForeGroundColor Yellow -Prompt "We Detected System Monitor to be already installed proceed to uninstall Sysmon and install a newer version? [y/n]";
